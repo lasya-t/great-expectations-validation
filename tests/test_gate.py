@@ -42,3 +42,4 @@ def test_unit_change_caught_by_distribution_even_when_rows_look_valid(gate):
     failed = [e for _, e, _ in r.failed]
     assert "expect_column_values_to_be_between" not in failed       # row-level check is fooled
     assert "expect_column_mean_to_be_between" in failed             # batch-level check is not
+    assert r.decision == "quarantine"

@@ -27,8 +27,9 @@ def build_suite() -> gx.ExpectationSuite:
         gxe.ExpectColumnValuesToBeBetween(column="amount", min_value=0, max_value=20_000, meta=crit),
         # a few missing customer ids happen (guest checkout); more than 1% means an upstream bug
         gxe.ExpectColumnValuesToNotBeNull(column="customer_id", mostly=0.99, meta=warn),
-        # typical order is ~$90; a batch averaging far outside that means a unit or currency problem
-        gxe.ExpectColumnMeanToBeBetween(column="amount", min_value=60, max_value=130, meta=warn),
+        # typical order is ~$90; a batch averaging far outside that means a unit or currency problem.
+        # critical, not a warning: cents-instead-of-dollars on small orders passes every row-level check
+        gxe.ExpectColumnMeanToBeBetween(column="amount", min_value=60, max_value=130, meta=crit),
         gxe.ExpectTableRowCountToBeBetween(min_value=3_000, max_value=8_000, meta=warn),
         gxe.ExpectColumnDistinctValuesToBeInSet(column="channel", value_set=["web", "app", "store"], meta=warn),
     ]:
