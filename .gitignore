@@ -17,3 +17,4 @@ dim_date.csv
 *.db
 gx/
 .gx_run/
+quarantine/
