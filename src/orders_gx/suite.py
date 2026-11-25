@@ -53,8 +53,12 @@ def _describe(r) -> str:
         ov = res["observed_value"]
         ov = f"{ov:.2f}" if isinstance(ov, float) else ov
         return f"{col}: observed {ov}"
-    if r.exception_info and r.exception_info.get("raised_exception"):
-        return f"{col}: could not evaluate ({str(r.exception_info.get('exception_message', ''))[:60]})"
+    # exception_info is keyed by metric id; any entry means the check couldn't run, usually a missing column
+    if r.exception_info:
+        msgs = [v.get("exception_message", "") for v in r.exception_info.values() if isinstance(v, dict)]
+        if any("not found" in m.lower() or "keyerror" in m.lower() or col in m for m in msgs):
+            return f"{col}: column missing, check could not run"
+        return f"{col}: could not evaluate ({(msgs[0] if msgs else '')[:60]})"
     return col
 
 
